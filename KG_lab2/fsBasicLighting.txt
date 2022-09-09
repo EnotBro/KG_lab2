@@ -7,6 +7,7 @@ in vec2 TexCoords;
 
 uniform sampler2D texture1;
 uniform vec3 lightPos;
+uniform vec3 lightPos1;
 uniform vec3 viewPos;
 uniform vec3 lightColor;
 uniform vec3 objectColor;
@@ -35,6 +36,18 @@ void main()
     
     vec3 specular = vec3(0.3) * spec; // подразумеваем €ркий белый свет
 
-    FragColor = vec4(ambient + diffuse + specular, 1.0);
+    vec3 lightDir1 = normalize(lightPos1 - FragPos);
+    float diff1 = max(dot(lightDir1, normal), 0.0);
+    vec3 diffuse1 = diff1 * color;
+
+	// ќтраженна€ составл€юща€
+    vec3 reflectDir1 = reflect(-lightDir1, normal);
+
+    float spec1 = 0.0;
+    vec3 halfwayDir1 = normalize(lightDir1 + viewDir);  
+    spec1 = pow(max(dot(normal, halfwayDir1), 0.0), 32.0);
+    vec3 specular1 = vec3(0.3) * spec1; // подразумеваем €ркий белый свет
+
+    FragColor = vec4(ambient + diffuse + diffuse1  + specular + specular1, 1.0);
 
 }

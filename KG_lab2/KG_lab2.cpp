@@ -38,7 +38,7 @@ float lastFrame = 0.0f;
 
 // Освещение
 glm::vec3 lightPos(1.2f, 0.5f, 2.0f);
-
+glm::vec3 lightPos1(0.0f, 1.0f, 1.0f);
 glm::vec3 objectPos(0.0f, 0.0f, 0.0f);
 
 int main()
@@ -82,7 +82,9 @@ int main()
 
 	// Компилирование нашей шейдерной программы
 	Shader lightingShader("vsBasicLighting.txt", "fsBasicLighting.txt");
+	Shader lightingShader1("vsBasicLighting.txt", "fsBasicLighting.txt");
 	Shader lampShader("vsLamp.txt", "fsLamp.txt");
+	Shader lampShader1("vsLamp.txt", "fsLamp.txt");
 
 		//0, 1, 7, //лево
 		//0, 5, 7,
@@ -329,12 +331,27 @@ int main()
 		lampShader.setMat4("projection", projection);
 		lampShader.setMat4("view", view);
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, lightPos); // раскомментируй для движения света
+		model = glm::translate(model, lightPos1); // раскомментируй для движения света
 		/*model = glm::translate(model, objectPos - lightPos);
 		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::translate(model, -(objectPos - lightPos));*/
 		model = glm::scale(model, glm::vec3(0.2f));
 		lampShader.setMat4("model", model);
+
+
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 72);
+
+		lampShader1.use();
+		lampShader1.setMat4("projection", projection);
+		lampShader1.setMat4("view", view);
+		glm::mat4 model1 = glm::mat4(1.0f);
+		model1 = glm::translate(model1, lightPos); // раскомментируй для движения света
+		/*model1 = glm::translate(model1, objectPos - lightPos);
+		model1 = glm::rotate(model1, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model1 = glm::translate(model1, -(objectPos - lightPos));*/
+		model1 = glm::scale(model1, glm::vec3(0.2f));
+		lampShader1.setMat4("model", model1);
 
 
 		glBindVertexArray(lightVAO);
@@ -351,6 +368,7 @@ int main()
 		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		lightingShader.setVec3("lightPos", glm::vec3(model[3]));
+		lightingShader.setVec3("lightPos1", glm::vec3(model1[3]));
 		lightingShader.setVec3("viewPos", camera.Position);
 
 		// Преобразования Вида/Проекции
